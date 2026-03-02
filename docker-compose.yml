@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: api-boilerplate-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: 1q2w3e4r
+      POSTGRES_DB: api-boilerplate-db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data
+
+volumes:
+  .postgres-data:
