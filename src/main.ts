@@ -18,8 +18,8 @@ async function bootstrap() {
   })
 
   const config = new DocumentBuilder()
-    .setTitle('Doctitle - Boilerplate API')
-    .setDescription('Description here')
+    .setTitle('Training Manager API')
+    .setDescription('REST API for the Training Manager application')
     .setVersion('1.0')
     .addTag('users')
     .build()
@@ -33,7 +33,7 @@ async function bootstrap() {
   const scalarConfig = {
     sources: [
       {
-        title: 'Boilerplate API',
+        title: 'Training Manager API',
         slug: 'training-manager-api',
         url: '/openapi.json',
       },

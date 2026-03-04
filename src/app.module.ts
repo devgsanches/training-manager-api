@@ -4,9 +4,11 @@ import { AuthModule } from '@thallesp/nestjs-better-auth'
 
 import { AppService } from './app.service'
 import { envSchema } from './env'
-import { health_checkController } from './health-check.controller'
+import { HealthCheckController } from './health_check.controller'
 import { auth } from './lib/auth'
+import { PrismaModule } from './lib/prisma.module'
 import { UsersModule } from './users/users.module'
+import { WorkoutPlanModule } from './workout_plan/workout_plan.module'
 
 @Module({
   imports: [
@@ -15,9 +17,11 @@ import { UsersModule } from './users/users.module'
       isGlobal: true,
     }),
     AuthModule.forRoot({ auth }),
+    PrismaModule,
     UsersModule,
+    WorkoutPlanModule,
   ],
-  controllers: [health_checkController],
+  controllers: [HealthCheckController],
   providers: [AppService],
 })
 export class AppModule {}
