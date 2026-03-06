@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
 
-import type { CreateWorkoutPlanDto } from '../dto/create-workout_plan.dto'
-import type { WorkoutPlanResponse } from '../entities/workout_plan.entity'
+import type {
+  CreateWorkoutPlanData,
+  CreateWorkoutPlanOutputDto,
+} from '../dto/workout-plan.dto'
 import { WorkoutPlanRepository } from '../repositories/workout-plan.repository'
 
 @Injectable()
 export class CreateWorkoutPlanUseCase {
   constructor(private readonly repository: WorkoutPlanRepository) {}
 
-  async execute(dto: CreateWorkoutPlanDto): Promise<WorkoutPlanResponse> {
+  async execute(
+    dto: CreateWorkoutPlanData,
+  ): Promise<CreateWorkoutPlanOutputDto> {
     const result = await this.repository.create(dto)
 
     return {

@@ -32,3 +32,25 @@ export class UnauthorizedErrorResponse {
   @ApiProperty({ example: 'Unauthorized' })
   message!: string
 }
+
+export class ForbiddenErrorResponse {
+  @ApiProperty({ example: 403 })
+  statusCode!: number
+
+  @ApiProperty({ example: 'Forbidden' })
+  error!: string
+
+  @ApiProperty({ example: 'Forbidden' })
+  message!: string
+}
+
+export class ConflictErrorResponse {
+  @ApiProperty({ example: 409 })
+  statusCode!: number
+
+  @ApiProperty({ example: 'Conflict' })
+  error!: string
+
+  @ApiProperty({ example: 'Session already in progress' })
+  message!: string
+}

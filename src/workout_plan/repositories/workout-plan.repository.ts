@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common'
 
 import type { WeekDay } from '../../../generated/prisma/client'
 import { PrismaService } from '../../lib/prisma.service'
-import type { CreateWorkoutPlanDto } from '../dto/create-workout_plan.dto'
-import type { UpdateWorkoutPlanDto } from '../dto/update-workout_plan.dto'
+import type {
+  CreateWorkoutPlanData,
+  UpdateWorkoutPlanInputDto,
+} from '../dto/workout-plan.dto'
 
 const workoutPlanInclude = {
   workoutDays: {
@@ -17,7 +19,7 @@ const workoutPlanInclude = {
 export class WorkoutPlanRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateWorkoutPlanDto) {
+  async create(dto: CreateWorkoutPlanData) {
     const { userId } = dto
 
     const existsPlanActive = await this.findOneActive(userId)
@@ -64,6 +66,30 @@ export class WorkoutPlanRepository {
     })
   }
 
+  async findOneActiveWithDays(userId: string) {
+    return this.prisma.workoutPlan.findFirst({
+      where: { userId, isActive: true },
+      include: {
+        workoutDays: {
+          include: {
+            _count: { select: { exercises: true } },
+          },
+        },
+      },
+    })
+  }
+
+  async findDayWithExercisesAndSessions(dayId: string) {
+    return this.prisma.workoutDay.findFirst({
+      where: { id: dayId },
+      include: {
+        exercises: { orderBy: { order: 'asc' as const } },
+        sessions: { orderBy: { startedAt: 'desc' as const } },
+        workoutPlan: { select: { userId: true } },
+      },
+    })
+  }
+
   async findAll(userId: string) {
     return this.prisma.workoutPlan.findMany({
       where: { userId },
@@ -78,7 +104,7 @@ export class WorkoutPlanRepository {
     })
   }
 
-  async update(id: string, dto: UpdateWorkoutPlanDto) {
+  async update(id: string, dto: UpdateWorkoutPlanInputDto) {
     return this.prisma.$transaction(async (tx) => {
       if (dto.workoutDays) {
         await tx.workoutDay.deleteMany({ where: { workoutPlanId: id } })

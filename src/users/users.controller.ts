@@ -1,51 +1,98 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
-  Patch,
-  Post,
+  Put,
+  Req,
+  type Request,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
 import {
-  AllowAnonymous,
-  Session,
-  UserSession,
-} from '@thallesp/nestjs-better-auth'
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth'
 
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
-import { UsersService } from './users.service'
+import {
+  NotFoundErrorResponse,
+  UnauthorizedErrorResponse,
+  ValidationErrorResponse,
+} from '../lib/error-responses.dto'
+import { ZodValidationPipe } from '../lib/zod-validation.pipe'
+import {
+  GetUserTrainDataOutputDto,
+  upsertUserTrainDataBodySchema,
+  type UpsertUserTrainDataDto,
+  UpsertUserTrainDataOutputDto,
+} from './dto/users.dto'
+import { GetUserByIdUseCase } from './use-cases/get-user-by-id.use-case'
+import { GetUserTrainDataUseCase } from './use-cases/get-user-train-data.use-case'
+import { GetUsersUseCase } from './use-cases/get-users.use-case'
+import { UpsertUserTrainDataUseCase } from './use-cases/upsert-user-train-data.use-case'
 
-@ApiTags('users')
+@ApiTags('Users')
+@ApiUnauthorizedResponse({ type: UnauthorizedErrorResponse })
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly getUserTrainData: GetUserTrainDataUseCase,
+    private readonly upsertUserTrainData: UpsertUserTrainDataUseCase,
+    private readonly getUsers: GetUsersUseCase,
+    private readonly getUserByIdUseCase: GetUserByIdUseCase,
+  ) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto)
-  }
-
+  @ApiOperation({
+    summary: 'Get all users (admin)',
+    description:
+      'Lists all users. Requires admin privileges (user ID in ADMIN_USER_IDS).',
+  })
   @Get()
-  @AllowAnonymous()
-  findAll() {
-    return this.usersService.findAll()
+  @ApiOkResponse({ description: 'List of users with pagination metadata' })
+  findAll(@Req() req: Request) {
+    return this.getUsers.execute(req.headers)
   }
 
+  @ApiOperation({
+    summary: 'Get authenticated user train data',
+    description:
+      'Returns the authenticated user profile and training data. Fields are null if not yet set.',
+  })
   @Get('me')
-  getProfile(@Session() session: UserSession) {
-    return { user: session.user }
+  @ApiOkResponse({ type: GetUserTrainDataOutputDto })
+  @ApiNotFoundResponse({ type: NotFoundErrorResponse })
+  getMe(@Session() session: UserSession) {
+    return this.getUserTrainData.execute(session.user.id)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto)
+  @ApiOperation({
+    summary: 'Update authenticated user train data',
+    description:
+      'Creates or updates the training data for the authenticated user.',
+  })
+  @Put('me')
+  @ApiOkResponse({ type: UpsertUserTrainDataOutputDto })
+  @ApiBadRequestResponse({ type: ValidationErrorResponse })
+  updateMe(
+    @Session() session: UserSession,
+    @Body(new ZodValidationPipe(upsertUserTrainDataBodySchema))
+    body: UpsertUserTrainDataDto,
+  ) {
+    return this.upsertUserTrainData.execute(session.user.id, body)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id)
+  @ApiOperation({
+    summary: 'Get user by ID (admin)',
+    description:
+      'Fetches a user by ID. Requires admin privileges (user ID in ADMIN_USER_IDS).',
+  })
+  @Get(':userId')
+  @ApiOkResponse({ description: 'User details' })
+  @ApiNotFoundResponse({ type: NotFoundErrorResponse })
+  getUserById(@Param('userId') userId: string, @Req() req: Request) {
+    return this.getUserByIdUseCase.execute(userId, req.headers)
   }
 }

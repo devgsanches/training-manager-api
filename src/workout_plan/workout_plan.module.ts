@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common'
 
 import { WorkoutPlanRepository } from './repositories/workout-plan.repository'
 import { CreateWorkoutPlanUseCase } from './use-cases/create-workout-plan.use-case'
-import { FindOneWorkoutPlanUseCase } from './use-cases/find-one-workout-plan.use-case'
+import { GetWorkoutDayUseCase } from './use-cases/get-workout-day.use-case'
+import { GetWorkoutPlanUseCase } from './use-cases/get-workout-plan.use-case'
 import { RemoveWorkoutPlanUseCase } from './use-cases/remove-workout-plan.use-case'
 import { WorkoutPlanController } from './workout_plan.controller'
 
@@ -11,8 +12,10 @@ import { WorkoutPlanController } from './workout_plan.controller'
   providers: [
     WorkoutPlanRepository,
     CreateWorkoutPlanUseCase,
-    FindOneWorkoutPlanUseCase,
+    GetWorkoutPlanUseCase,
+    GetWorkoutDayUseCase,
     RemoveWorkoutPlanUseCase,
   ],
+  exports: [WorkoutPlanRepository],
 })
 export class WorkoutPlanModule {}

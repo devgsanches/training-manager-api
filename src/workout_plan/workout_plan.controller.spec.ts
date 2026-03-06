@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { WorkoutPlanController } from './workout_plan.controller'
-import { WorkoutPlanService } from './workout_plan.service'
 
 describe('WorkoutPlanController', () => {
   let controller: WorkoutPlanController
@@ -9,7 +8,7 @@ describe('WorkoutPlanController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WorkoutPlanController],
-      providers: [WorkoutPlanService],
+      providers: [],
     }).compile()
 
     controller = module.get<WorkoutPlanController>(WorkoutPlanController)

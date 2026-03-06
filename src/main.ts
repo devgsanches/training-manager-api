@@ -21,7 +21,6 @@ async function bootstrap() {
     .setTitle('Training Manager API')
     .setDescription('REST API for the Training Manager application')
     .setVersion('1.0')
-    .addTag('users')
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
