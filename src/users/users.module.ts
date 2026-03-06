@@ -16,5 +16,6 @@ import { UsersController } from './users.controller'
     GetUserByIdUseCase,
     UpsertUserTrainDataUseCase,
   ],
+  exports: [GetUserTrainDataUseCase, UpsertUserTrainDataUseCase],
 })
 export class UsersModule {}

@@ -35,6 +35,23 @@ export const createWorkoutPlanSchema = z.object({
 
 export const updateWorkoutPlanSchema = createWorkoutPlanSchema.partial()
 
+// --- Get All ---
+
+export const getAllWorkoutPlansQuerySchema = z.object({
+  active: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) =>
+      v === 'true' ? true : v === 'false' ? false : undefined,
+    ),
+})
+
+export type GetAllWorkoutPlansQuery = z.infer<
+  typeof getAllWorkoutPlansQuerySchema
+>
+
+export type GetAllWorkoutPlansOutput = GetWorkoutPlanOutputDto[]
+
 // --- Swagger: Input (nested) ---
 
 class ExerciseInputDto {

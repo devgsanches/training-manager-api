@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from '@thallesp/nestjs-better-auth'
 
+import { AiModule } from './ai/ai.module'
 import { AppService } from './app.service'
 import { envSchema } from './env'
 import { HealthCheckController } from './health_check.controller'
@@ -26,6 +27,7 @@ import { WorkoutSessionModule } from './workout_session/workout_session.module'
     WorkoutPlanModule,
     WorkoutSessionModule,
     StatsModule,
+    AiModule,
   ],
   controllers: [HealthCheckController, HomeController],
   providers: [AppService, GetHomeDataUseCase],

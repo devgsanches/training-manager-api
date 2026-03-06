@@ -90,9 +90,9 @@ export class WorkoutPlanRepository {
     })
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, active?: boolean) {
     return this.prisma.workoutPlan.findMany({
-      where: { userId },
+      where: { userId, isActive: active ?? undefined },
       include: workoutPlanInclude,
     })
   }

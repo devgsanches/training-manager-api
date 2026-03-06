@@ -50,7 +50,7 @@ async function bootstrap() {
   const port = configService.get('PORT', { infer: true })
 
   await app.listen(port, () => {
-    console.log(`Server is running on port ${port}! 🚀,`)
+    console.log(`Server is running on port ${port}! 🚀`)
   })
 }
 bootstrap().catch(console.error)

@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -6,6 +14,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -22,11 +31,14 @@ import {
   CreateWorkoutPlanInputDto,
   CreateWorkoutPlanOutputDto,
   createWorkoutPlanSchema,
+  type GetAllWorkoutPlansQuery,
+  getAllWorkoutPlansQuerySchema,
   GetWorkoutDayOutputDto,
   GetWorkoutPlanOutputDto,
   RemoveWorkoutPlanOutputDto,
 } from './dto/workout-plan.dto'
 import { CreateWorkoutPlanUseCase } from './use-cases/create-workout-plan.use-case'
+import { GetAllWorkoutPlanUseCase } from './use-cases/get-all-workout-plans.use-case'
 import { GetWorkoutDayUseCase } from './use-cases/get-workout-day.use-case'
 import { GetWorkoutPlanUseCase } from './use-cases/get-workout-plan.use-case'
 import { RemoveWorkoutPlanUseCase } from './use-cases/remove-workout-plan.use-case'
@@ -38,6 +50,7 @@ export class WorkoutPlanController {
   constructor(
     private readonly createWorkoutPlan: CreateWorkoutPlanUseCase,
     private readonly getWorkoutPlan: GetWorkoutPlanUseCase,
+    private readonly getAllWorkoutPlans: GetAllWorkoutPlanUseCase,
     private readonly getWorkoutDay: GetWorkoutDayUseCase,
     private readonly removeWorkoutPlan: RemoveWorkoutPlanUseCase,
   ) {}
@@ -62,13 +75,39 @@ export class WorkoutPlanController {
 
   @ApiOperation({
     summary: 'Get active workout plan',
-    description: 'Get the currently active workout plan.',
+    description:
+      'Get the currently active workout plan for the logged-in user.',
   })
-  @Get()
+  @Get('active')
   @ApiOkResponse({ type: GetWorkoutPlanOutputDto })
   @ApiNotFoundResponse({ type: NotFoundErrorResponse })
   getActive(@Session() session: UserSession): Promise<GetWorkoutPlanOutputDto> {
     return this.getWorkoutPlan.execute(session.user.id)
+  }
+
+  @ApiOperation({
+    summary: 'List workout plans',
+    description:
+      'List all workout plans. Without query params, returns all plans. Use ?active=true for active only, ?active=false for inactive only.',
+  })
+  @Get()
+  @ApiQuery({
+    name: 'active',
+    required: false,
+    enum: ['true', 'false'],
+    description: 'Filter by active status',
+  })
+  @ApiOkResponse({
+    description: 'List of workout plans',
+    type: GetWorkoutPlanOutputDto,
+    isArray: true,
+  })
+  findAll(
+    @Session() session: UserSession,
+    @Query(new ZodValidationPipe(getAllWorkoutPlansQuerySchema))
+    query: GetAllWorkoutPlansQuery,
+  ) {
+    return this.getAllWorkoutPlans.execute(session.user.id, query)
   }
 
   @ApiOperation({
