@@ -1,19 +1,14 @@
 import { openai } from '@ai-sdk/openai'
 import { Body, Controller, Post, Res, Session } from '@nestjs/common'
 import {
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 import { UserSession } from '@thallesp/nestjs-better-auth'
-import {
-  convertToModelMessages,
-  stepCountIs,
-  streamText,
-  tool,
-  UIMessage,
-} from 'ai'
+import { convertToModelMessages, stepCountIs, streamText, tool } from 'ai'
 import type { Response } from 'express'
 import { WeekDay } from 'generated/prisma/enums'
 import { GetUserTrainDataUseCase } from 'src/users/use-cases/get-user-train-data.use-case'
@@ -24,37 +19,9 @@ import { GetAllWorkoutPlanUseCase } from 'src/workout_plan/use-cases/get-all-wor
 import z from 'zod'
 
 import { UnauthorizedErrorResponse } from '../lib/error-responses.dto'
+import { AssistantBodyDto } from './dto/ai.dto'
 
-class AssistantBodyDto {
-  messages!: UIMessage[]
-}
-
-@ApiTags('AI')
-@ApiUnauthorizedResponse({ type: UnauthorizedErrorResponse })
-@Controller('ai')
-export class AiController {
-  constructor(
-    private readonly getUserTrainData: GetUserTrainDataUseCase,
-    private readonly upsertUserTrainData: UpsertUserTrainDataUseCase,
-    private readonly getAllWorkoutPlans: GetAllWorkoutPlanUseCase,
-    private readonly createWorkoutPlan: CreateWorkoutPlanUseCase,
-  ) {}
-
-  @ApiOperation({
-    summary: 'AI Assistant',
-    description: 'AI Assistant.',
-  })
-  @Post()
-  @ApiOkResponse()
-  async assistant(
-    @Session() session: UserSession,
-    @Body() body: AssistantBodyDto,
-    @Res() res: Response,
-  ) {
-    const { messages } = body
-    const result = streamText({
-      model: openai('gpt-4o-mini'),
-      system: `Você é um personal trainer virtual especialista em montagem de planos de treino. Tom amigável, motivador, linguagem simples, sem jargões técnicos. Público principal: pessoas leigas em musculação.
+const personalTrainerPrompt = `Você é um personal trainer virtual especialista em montagem de planos de treino. Tom amigável, motivador, linguagem simples, sem jargões técnicos. Público principal: pessoas leigas em musculação.
 
 REGRAS OBRIGATÓRIAS:
 1. SEMPRE chame a tool getUserTrainData antes de qualquer interação com o usuário.
@@ -97,7 +64,35 @@ Dias majoritariamente INFERIORES (pernas, glúteos, quadríceps, posterior, pant
 - https://gw8hy3fdcv.ufs.sh/f/ccoBDpLoAPCOgCHaUgNGronCvXmSzAMs1N3KgLdE5yHT6Ykj
 - https://gw8hy3fdcv.ufs.sh/f/ccoBDpLoAPCO85RVu3morROwZk5NPhs1jzH7X8TyEvLUCGxY
 
-Alternar entre as duas opções de cada categoria. Dias de descanso usam imagem de superior.`,
+Alternar entre as duas opções de cada categoria. Dias de descanso usam imagem de superior.`
+
+@ApiTags('AI')
+@ApiUnauthorizedResponse({ type: UnauthorizedErrorResponse })
+@Controller('ai')
+export class AiController {
+  constructor(
+    private readonly getUserTrainData: GetUserTrainDataUseCase,
+    private readonly upsertUserTrainData: UpsertUserTrainDataUseCase,
+    private readonly getAllWorkoutPlans: GetAllWorkoutPlanUseCase,
+    private readonly createWorkoutPlan: CreateWorkoutPlanUseCase,
+  ) {}
+
+  @ApiOperation({
+    summary: 'AI Assistant',
+    description: 'AI Assistant.',
+  })
+  @Post()
+  @ApiBody({ type: AssistantBodyDto })
+  @ApiOkResponse()
+  async assistant(
+    @Session() session: UserSession,
+    @Body() body: AssistantBodyDto,
+    @Res() res: Response,
+  ) {
+    const { messages } = body
+    const result = streamText({
+      model: openai('gpt-4o-mini'),
+      system: personalTrainerPrompt,
       tools: {
         getUserTrainData: tool({
           description:
