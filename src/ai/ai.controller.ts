@@ -80,9 +80,28 @@ export class AiController {
   @ApiOperation({
     summary: 'AI Assistant',
     description: 'AI Assistant.',
+    operationId: 'chatWithAssistant',
   })
   @Post()
-  @ApiBody({ type: AssistantBodyDto })
+  @ApiBody({
+    type: AssistantBodyDto,
+    examples: {
+      default: {
+        summary: 'Iniciar conversa com o assistente',
+        value: {
+          messages: [
+            {
+              id: '1',
+              role: 'user',
+              parts: [
+                { type: 'text', text: 'Oi, quero criar um plano de treino' },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  })
   @ApiOkResponse()
   async assistant(
     @Session() session: UserSession,

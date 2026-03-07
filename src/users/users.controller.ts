@@ -9,9 +9,11 @@ import {
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -25,6 +27,7 @@ import {
 import { ZodValidationPipe } from '../lib/zod-validation.pipe'
 import {
   GetUserTrainDataOutputDto,
+  UpsertUserTrainDataInputDto,
   upsertUserTrainDataBodySchema,
   type UpsertUserTrainDataDto,
   UpsertUserTrainDataOutputDto,
@@ -49,6 +52,7 @@ export class UsersController {
     summary: 'Get all users (admin)',
     description:
       'Lists all users. Requires admin privileges (user ID in ADMIN_USER_IDS).',
+    operationId: 'listUsers',
   })
   @Get()
   @ApiOkResponse({ description: 'List of users with pagination metadata' })
@@ -60,6 +64,7 @@ export class UsersController {
     summary: 'Get authenticated user train data',
     description:
       'Returns the authenticated user profile and training data. Fields are null if not yet set.',
+    operationId: 'getAuthenticatedUserTrainData',
   })
   @Get('me')
   @ApiOkResponse({ type: GetUserTrainDataOutputDto })
@@ -72,8 +77,23 @@ export class UsersController {
     summary: 'Update authenticated user train data',
     description:
       'Creates or updates the training data for the authenticated user.',
+    operationId: 'updateAuthenticatedUserTrainData',
   })
   @Put('me')
+  @ApiBody({
+    type: UpsertUserTrainDataInputDto,
+    examples: {
+      default: {
+        summary: 'Dados de treino (70kg, 175cm, 28 anos, 18% gordura)',
+        value: {
+          weightInGrams: 70000,
+          heightInCentimeters: 175,
+          age: 28,
+          bodyFatPercentage: 18,
+        },
+      },
+    },
+  })
   @ApiOkResponse({ type: UpsertUserTrainDataOutputDto })
   @ApiBadRequestResponse({ type: ValidationErrorResponse })
   updateMe(
@@ -88,8 +108,10 @@ export class UsersController {
     summary: 'Get user by ID (admin)',
     description:
       'Fetches a user by ID. Requires admin privileges (user ID in ADMIN_USER_IDS).',
+    operationId: 'getUserById',
   })
   @Get(':userId')
+  @ApiParam({ name: 'userId', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
   @ApiOkResponse({ description: 'User details' })
   @ApiNotFoundResponse({ type: NotFoundErrorResponse })
   getUserById(@Param('userId') userId: string, @Req() req: Request) {

@@ -45,7 +45,18 @@ export type CompleteWorkoutSessionResponseDto = z.infer<
   typeof completeWorkoutSessionResponseSchema
 >
 
-// --- Scalar Docs ---
+// --- Swagger: Request Body ---
+
+export class CompleteWorkoutSessionBodyDto {
+  @ApiProperty({
+    example: '2026-03-07T19:46:55.754Z',
+    description: 'Data/hora de conclusão da sessão (ISO 8601)',
+    format: 'date-time',
+  })
+  completedAt!: string
+}
+
+// --- Swagger: Response ---
 
 export class StartWorkoutSessionResponse {
   @ApiProperty({

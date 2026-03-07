@@ -22,6 +22,7 @@ export class StatsController {
     summary: 'Get user stats',
     description:
       'Returns stats for the authenticated user within a date range, including workout streak, consistency, completion rate and total time.',
+    operationId: 'getStats',
   })
   @Get()
   @ApiOkResponse({ type: GetStatsOutputDto })

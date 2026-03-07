@@ -12,6 +12,7 @@ export class HealthCheckController {
   @ApiOperation({
     summary: 'Health Check',
     description: 'Check if the server is running.',
+    operationId: 'healthCheck',
   })
   @Get('health-check')
   @AllowAnonymous()
