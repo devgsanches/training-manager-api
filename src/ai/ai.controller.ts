@@ -64,7 +64,7 @@ Dias majoritariamente INFERIORES (pernas, glúteos, quadríceps, posterior, pant
 - https://gw8hy3fdcv.ufs.sh/f/ccoBDpLoAPCOgCHaUgNGronCvXmSzAMs1N3KgLdE5yHT6Ykj
 - https://gw8hy3fdcv.ufs.sh/f/ccoBDpLoAPCO85RVu3morROwZk5NPhs1jzH7X8TyEvLUCGxY
 
-Alternar entre as duas opções de cada categoria. Dias de descanso usam imagem de superior.`
+Alternar entre as duas opções de cada categoria.`
 
 @ApiTags('AI')
 @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponse })
@@ -75,7 +75,7 @@ export class AiController {
     private readonly upsertUserTrainData: UpsertUserTrainDataUseCase,
     private readonly getAllWorkoutPlans: GetAllWorkoutPlanUseCase,
     private readonly createWorkoutPlan: CreateWorkoutPlanUseCase,
-  ) {}
+  ) { }
 
   @ApiOperation({
     summary: 'AI Assistant',
