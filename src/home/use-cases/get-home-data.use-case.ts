@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
 import utc from 'dayjs/plugin/utc'
 
 import type { WeekDay } from '../../../generated/prisma/client'
@@ -8,6 +9,7 @@ import { WorkoutSessionRepository } from '../../workout_session/repositories/wor
 import type { GetHomeDataDto, HomeResponseDto } from '../dto/home.dto'
 
 dayjs.extend(utc)
+dayjs.extend(isoWeek)
 
 const WEEKDAY_MAP: Record<number, WeekDay> = {
   0: 'SUNDAY',
@@ -53,8 +55,8 @@ export class GetHomeDataUseCase {
         }
       : null
 
-    const weekStart = currentDate.startOf('week').toDate()
-    const weekEnd = currentDate.endOf('week').toDate()
+    const weekStart = currentDate.startOf('isoWeek').toDate()
+    const weekEnd = currentDate.endOf('isoWeek').toDate()
 
     const sessions = await this.workoutSessionRepository.findInRange(
       userId,
@@ -153,6 +155,10 @@ export class GetHomeDataUseCase {
       if (completedDates.has(dateKey)) {
         streak++
       } else {
+        if (dateKey === currentDate.format('YYYY-MM-DD')) {
+          day = day.subtract(1, 'day')
+          continue
+        }
         break
       }
 
