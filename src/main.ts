@@ -5,16 +5,20 @@ import { apiReference } from '@scalar/nestjs-api-reference'
 import { type Request, type Response } from 'express'
 
 import { AppModule } from './app.module'
-import { Env } from './env'
+import { Env } from './lib/env'
 import { env } from './lib/env'
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
+    bufferLogs: true,
   })
 
+  app.useLogger(app.get(Logger))
+
   app.enableCors({
-    origin: env.BETTER_AUTH_URL,
+    origin: env.API_BASE_URL,
     credentials: true,
   })
 
@@ -22,7 +26,7 @@ async function bootstrap() {
     .setTitle('Training Manager API')
     .setDescription('REST API for the Training Manager application')
     .setVersion('1.0')
-    .addServer(env.BETTER_AUTH_URL, 'Local development')
+    .addServer(env.API_BASE_URL, 'Local development')
     .addBearerAuth()
     .build()
 
@@ -52,8 +56,9 @@ async function bootstrap() {
   const configService = app.get<ConfigService<Env, true>>(ConfigService)
   const port = configService.get('PORT', { infer: true })
 
+  const logger = app.get(Logger);
   await app.listen(port, () => {
-    console.log(`Server is running on port ${port}! 🚀`)
+    logger.log(`Server is running on port ${port}! 🚀`)
   })
 }
 bootstrap().catch(console.error)

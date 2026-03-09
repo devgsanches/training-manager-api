@@ -7,13 +7,12 @@ import { ConfigService } from '@nestjs/config'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 import { PrismaClient } from '../../generated/prisma/client'
-import type { Env } from '../env'
+import { Env } from './env'
 
 @Injectable()
 export class PrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+  implements OnModuleInit, OnModuleDestroy {
   constructor(configService: ConfigService<Env, true>) {
     const databaseUrl = configService.get('DATABASE_URL', { infer: true })
 

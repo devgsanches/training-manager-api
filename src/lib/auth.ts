@@ -9,16 +9,14 @@ import { admin } from 'better-auth/plugins/admin'
 import { PrismaClient } from '../../generated/prisma/client'
 import { env } from './env'
 
-const databaseUrl = process.env.DATABASE_URL
+const databaseUrl = env.DATABASE_URL
 
 if (!databaseUrl) {
   throw new Error('Missing DATABASE_URL in environment variables.')
 }
 
-const adminUserIds = process.env.ADMIN_USER_IDS
-  ? process.env.ADMIN_USER_IDS.split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
+const adminUserIds = env.ADMIN_USER_IDS
+  ? env.ADMIN_USER_IDS
   : []
 
 const prisma = new PrismaClient({
@@ -26,13 +24,13 @@ const prisma = new PrismaClient({
 })
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: [env.WEB_APP_URL],
+  baseURL: env.API_BASE_URL,
+  trustedOrigins: [env.WEB_APP_BASE_URL],
   socialProviders: {
     google: {
       prompt: 'select_account',
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: env.GOOGLE_CLIENT_ID as string,
+      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
     },
   },
   emailAndPassword: {

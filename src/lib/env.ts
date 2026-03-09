@@ -1,10 +1,10 @@
 import z from "zod";
 
-const envSchema = z.object({
+export const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
   DATABASE_URL: z.string().startsWith('postgresql://'),
   BETTER_AUTH_SECRET: z.string(),
-  BETTER_AUTH_URL: z.string(),
+  API_BASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   ADMIN_USER_IDS: z
@@ -19,7 +19,10 @@ const envSchema = z.object({
         : [],
     ),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
-  WEB_APP_URL: z.string(),
+  WEB_APP_BASE_URL: z.string(),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 })
 
 export const env = envSchema.parse(process.env)
+
+export type Env = z.infer<typeof envSchema>
