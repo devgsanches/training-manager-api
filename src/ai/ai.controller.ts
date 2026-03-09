@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { Body, Controller, Post, Res, Session } from '@nestjs/common'
 import {
   ApiBody,
@@ -110,7 +110,7 @@ export class AiController {
   ) {
     const { messages } = body
     const result = streamText({
-      model: google('gemini-2.5-flash'),
+      model: openai('gpt-4.1-mini'),
       system: personalTrainerPrompt,
       tools: {
         getUserTrainData: tool({

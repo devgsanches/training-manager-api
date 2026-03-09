@@ -18,7 +18,7 @@ export const envSchema = z.object({
           .filter(Boolean)
         : [],
     ),
-  GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
+  OPENAI_API_KEY: z.string(),
   WEB_APP_BASE_URL: z.string(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 })
