@@ -27,6 +27,8 @@ async function bootstrap() {
     .setDescription('REST API for the Training Manager application')
     .setVersion('1.0')
     .addServer(env.API_BASE_URL, 'Local development')
+    .addServer('https://training-manager-api.onrender.com', 'Production')
+    .addServer('https://training-manager-api.onrender.com/api', 'Better Auth Production')
     .addBearerAuth()
     .build()
 
