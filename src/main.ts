@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useLogger(app.get(Logger))
 
   app.enableCors({
-    origin: env.API_BASE_URL,
+    origin: env.WEB_APP_BASE_URL,
     credentials: true,
   })
 
