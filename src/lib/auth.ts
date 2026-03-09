@@ -50,4 +50,11 @@ export const auth = betterAuth({
       adminUserIds,
     }),
   ],
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+      domain:
+        env.NODE_ENV === "production" ? ".sanchezapp.dev" : undefined,
+    },
+  },
 })
