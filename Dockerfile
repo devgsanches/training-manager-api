@@ -22,7 +22,7 @@ FROM deps AS build
 
 COPY . .
 
-RUN pnpm run build && cp -r generated dist/generated
+RUN pnpm prisma generate && pnpm run build && cp -r generated dist/generated
 
 # ------- Production -------
 FROM base AS production
