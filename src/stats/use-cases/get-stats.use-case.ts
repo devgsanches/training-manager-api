@@ -20,7 +20,7 @@ const WEEKDAY_MAP: Record<number, WeekDay> = {
 
 @Injectable()
 export class GetStatsUseCase {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async execute(dto: GetStatsDto): Promise<GetStatsResponseDto> {
     const { from, to, timezoneOffset, userId } = dto
@@ -150,6 +150,10 @@ export class GetStatsUseCase {
         continue
       }
 
+      if (dateKey === currentDate.format('YYYY-MM-DD')) {
+        day = day.subtract(1, 'day')
+        continue
+      }
       break
     }
 

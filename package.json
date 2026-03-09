@@ -24,6 +24,7 @@
     "node": "24.x"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.43",
     "@ai-sdk/openai": "3.0.33",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
