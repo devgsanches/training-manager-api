@@ -6,6 +6,7 @@ import { type Request, type Response } from 'express'
 
 import { AppModule } from './app.module'
 import { Env } from './env'
+import { env } from './lib/env'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,7 +14,7 @@ async function bootstrap() {
   })
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: env.BETTER_AUTH_URL,
     credentials: true,
   })
 
@@ -21,7 +22,7 @@ async function bootstrap() {
     .setTitle('Training Manager API')
     .setDescription('REST API for the Training Manager application')
     .setVersion('1.0')
-    .addServer('http://localhost:3333', 'Local development')
+    .addServer(env.BETTER_AUTH_URL, 'Local development')
     .addBearerAuth()
     .build()
 

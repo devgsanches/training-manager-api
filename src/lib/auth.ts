@@ -7,6 +7,7 @@ import { openAPI } from 'better-auth/plugins'
 import { admin } from 'better-auth/plugins/admin'
 
 import { PrismaClient } from '../../generated/prisma/client'
+import { env } from './env'
 
 const databaseUrl = process.env.DATABASE_URL
 
@@ -16,8 +17,8 @@ if (!databaseUrl) {
 
 const adminUserIds = process.env.ADMIN_USER_IDS
   ? process.env.ADMIN_USER_IDS.split(',')
-      .map((id) => id.trim())
-      .filter(Boolean)
+    .map((id) => id.trim())
+    .filter(Boolean)
   : []
 
 const prisma = new PrismaClient({
@@ -26,7 +27,7 @@ const prisma = new PrismaClient({
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: ['http://localhost:3000'],
+  trustedOrigins: [env.WEB_APP_URL],
   socialProviders: {
     google: {
       prompt: 'select_account',
