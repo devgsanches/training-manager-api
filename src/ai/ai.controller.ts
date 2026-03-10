@@ -54,7 +54,8 @@ PRINCÍPIOS DE MONTAGEM:
 - Evitar treinar o mesmo grupo muscular em dias consecutivos
 - Nomes descritivos para cada dia (ex: "Superior A - Peito e Costas", "Descanso")
 
-IMAGENS DE CAPA (coverImageUrl) - SEMPRE fornecer para cada dia de treino, EXCETO dias de descanso, NÃO possuem imagens de capa):
+IMAGENS DE CAPA (coverImageUrl) - SEMPRE fornecer para cada dia de treino, PARA dias de descanso, USE:
+- https://community.softr.io/uploads/db9110/original/2X/7/74e6e7e382d0ff5d7773ca9a87e6f6f8817a68a6.jpeg
 
 Dias majoritariamente SUPERIORES (peito, costas, ombros, bíceps, tríceps, push, pull, upper, full body):
 - https://gw8hy3fdcv.ufs.sh/f/ccoBDpLoAPCO3y8pQ6GBg8iqe9pP2JrHjwd1nfKtVSQskI0v
